@@ -29,18 +29,16 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
               <li>
-                               <Link href={'/'}>Home</Link>
-
+                <Link href={"/"}>Home</Link>
               </li>
               <li>
                 <Link href={"/college"}>Colleges</Link>
               </li>
               <li>
-            <Link href={'/admission'}>Admission Form</Link>
-
+                <Link href={"/admission"}>Admission Form</Link>
               </li>
               <li>
-                <a>My College</a>
+                <Link href={"/my-college"}>My College</Link>
               </li>
             </ul>
           </div>
@@ -49,17 +47,16 @@ const Navbar = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-                          <Link href={'/'}>Home</Link>
-
+              <Link href={"/"}>Home</Link>
             </li>
             <li>
               <Link href={"/college"}>Colleges</Link>
             </li>
             <li>
-            <Link href={'/admission'}>Admission Form</Link>
+              <Link href={"/admission"}>Admission Form</Link>
             </li>
             <li>
-              <a>My College</a>
+              <Link href={"/my-college"}>My College</Link>
             </li>
           </ul>
         </div>
