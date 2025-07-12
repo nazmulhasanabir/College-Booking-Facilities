@@ -61,7 +61,7 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <div className="dropdown dropdown-end">
+          {/* <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
               role="button"
@@ -73,6 +73,7 @@ const Navbar = () => {
                   src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                 />
               </div>
+              
             </div>
             <ul
               tabIndex={0}
@@ -88,7 +89,12 @@ const Navbar = () => {
                 <a>Logout</a>
               </li>
             </ul>
-          </div>
+          </div> */}
+          <ul>
+                  <li>
+              <Link href={"/sign-up"}>Sign-Up</Link>
+            </li>
+              </ul>
         </div>
       </div>
     </div>

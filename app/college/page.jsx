@@ -1,9 +1,10 @@
+import AllColleges from '@/Components/AllColleges';
 import React from 'react';
 
 const page = () => {
     return (
         <div>
-            <h2>All college are here</h2>
+       <AllColleges></AllColleges>
         </div>
     );
 };
