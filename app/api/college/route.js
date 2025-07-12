@@ -1,42 +1,23 @@
-// import client from "@/lib/mongo";
+import { client } from "@/lib/mongoClient";
 import { NextResponse } from "next/server";
-import { MongoClient, ServerApiVersion } from "mongodb";
-// MongoDB URI
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_KEY}@cluster0.pb8np.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-// MongoDB client setup
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
-
-export default client;
-export async function GET(req) {
+export async function GET(request) {
   try {
     await client.connect();
-    const db = client.db("CollegeBookingFacilities");
-    const collegeCollection = db.collection("College");
+    const db = client.db("CollegeAdmission");
+    const collection = db.collection("college");
 
-    const college = await collegeCollection.find({}).toArray();
+    const colleges = await collection.find({}).toArray();
 
-    return NextResponse.json({
-      message: "success",
-      status: 200,
-      data: college,
-    });
+    return NextResponse.json(colleges, { status: 200 });
   } catch (error) {
+    console.error("Failed to fetch college data:", error);
     return NextResponse.json(
-      {
-        message: "Failed to fetch colleges",
-        error: error.message,
-      },
+      { message: "Failed to fetch college data", error },
       { status: 500 }
     );
   } finally {
-    // Optional: Do not close the client for serverless functions
-    // await client.close();
+    // Ensures that the client will close when you finish/error
+    await client.close();
   }
 }

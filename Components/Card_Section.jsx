@@ -1,4 +1,10 @@
+"use client";
+
+import { useState } from "react";
+
 const Card_Section = () => {
+  const [openId, setOpenId] = useState(null); // Track which card is open
+
   const colleges = [
     {
       id: 1,
@@ -15,7 +21,8 @@ const Card_Section = () => {
     {
       id: 2,
       name: "MIT",
-      image: "https://imageio.forbes.com/specials-images/imageserve//620ba39ca87ddcbad6bf109e/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds",
+      image:
+        "https://imageio.forbes.com/specials-images/imageserve//620ba39ca87ddcbad6bf109e/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds",
       admissionDate: "2024-01-01",
       researchCount: 3156,
       events: [
@@ -38,36 +45,59 @@ const Card_Section = () => {
     }
   ];
 
+  const toggleDetails = (id) => {
+    setOpenId(openId === id ? null : id); // Toggle the current one
+  };
+
   return (
     <section className="py-8 px-4 bg-gray-100">
       <h2 className="text-3xl font-bold text-center mb-8">Top Colleges</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
         {colleges.map((college) => (
           <div key={college.id} className="bg-white rounded-lg shadow-md p-4">
-            <img src={college.image} alt={college.name} className="w-full h-40 object-cover rounded" />
+            <img
+              src={college.image}
+              alt={college.name}
+              className="w-full h-40 object-cover rounded"
+            />
             <h3 className="text-xl font-semibold mt-3">{college.name}</h3>
-            <p className="text-sm text-gray-700 mt-1">Admission Date: {college.admissionDate}</p>
-            <p className="text-sm text-gray-700">Research Count: {college.researchCount}</p>
+            <p className="text-sm text-gray-700 mt-1">
+              Admission Date: {college.admissionDate}
+            </p>
+            <p className="text-sm text-gray-700">
+              Research Count: {college.researchCount}
+            </p>
 
-            <div className="mt-3">
-              <h4 className="font-semibold">Events:</h4>
-              <ul className="list-disc ml-5 text-sm text-gray-600">
-                {college.events.map((event, idx) => (
-                  <li key={idx}>
-                    {event.name} ({event.date})
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <button
+              onClick={() => toggleDetails(college.id)}
+              className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            >
+              {openId === college.id ? "Hide Details" : "View Details"}
+            </button>
 
-            <div className="mt-3">
-              <h4 className="font-semibold">Sports:</h4>
-              <ul className="list-disc ml-5 text-sm text-gray-600">
-                {college.sports.map((sport, idx) => (
-                  <li key={idx}>{sport}</li>
-                ))}
-              </ul>
-            </div>
+            {openId === college.id && (
+              <div className="mt-4 border-t pt-3">
+                <div>
+                  <h4 className="font-semibold">Events:</h4>
+                  <ul className="list-disc ml-5 text-sm text-gray-600">
+                    {college.events.map((event, idx) => (
+                      <li key={idx}>
+                        {event.name} ({event.date})
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-3">
+                  <h4 className="font-semibold">Sports:</h4>
+                  <ul className="list-disc ml-5 text-sm text-gray-600">
+                    {college.sports.map((sport, idx) => (
+                      <li key={idx}>{sport}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
