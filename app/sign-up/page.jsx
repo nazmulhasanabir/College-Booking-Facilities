@@ -3,6 +3,10 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import auth from "../firebase/config";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function ModernSignupForm() {
   const [formData, setFormData] = useState({
@@ -14,20 +18,52 @@ export default function ModernSignupForm() {
   });
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
+  const navigate = useRouter();
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
-    console.log("Submitted:", formData);
-    alert("Account created!");
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      const user = userCredential.user;
+
+      // Update the user's profile with the full name (displayName)
+      await updateProfile(user, {
+        displayName: formData.fullName,
+      });
+
+      console.log("Submitted:", formData);
+      console.log("User created and profile updated:", user);
+      toast.success("Successfully Login!", {
+        style: {
+          border: "1px solid #713200",
+          padding: "32px",
+        },
+      });
+      navigate.push("/");
+
+      // You might want to do something with the user object here, like redirecting them or updating UI
+    } catch (error) {
+      console.error("Error creating or updating user:", error.message);
+
+      toast.error(`Failed to create user: ${error.message}`, {
+        style: {
+          border: "1px solid #713200",
+          padding: "32px",
+        },
+      });
+    }
   };
 
   const isFormInvalid =
@@ -36,7 +72,6 @@ export default function ModernSignupForm() {
     !formData.password ||
     formData.password !== formData.confirmPassword ||
     !formData.agree;
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 px-4">
       <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md">
@@ -45,7 +80,7 @@ export default function ModernSignupForm() {
         </h2>
 
         <div className="flex justify-center gap-4 mb-6">
-          <button  className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md">
+          <button className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md">
             <FcGoogle size={20} /> Google
           </button>
           <button className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md text-blue-600">
@@ -53,7 +88,9 @@ export default function ModernSignupForm() {
           </button>
         </div>
 
-        <div className="text-center text-gray-400 text-sm mb-4">or continue with email</div>
+        <div className="text-center text-gray-400 text-sm mb-4">
+          or continue with email
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -86,7 +123,11 @@ export default function ModernSignupForm() {
               onClick={() => setShowPass(!showPass)}
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
             >
-              {showPass ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+              {showPass ? (
+                <IoEyeOffOutline size={20} />
+              ) : (
+                <IoEyeOutline size={20} />
+              )}
             </span>
           </div>
           {/* Confirm Password */}
@@ -103,7 +144,11 @@ export default function ModernSignupForm() {
               onClick={() => setShowConfirm(!showConfirm)}
               className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
             >
-              {showConfirm ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+              {showConfirm ? (
+                <IoEyeOffOutline size={20} />
+              ) : (
+                <IoEyeOutline size={20} />
+              )}
             </span>
           </div>
 
