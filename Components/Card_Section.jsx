@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ use next/navigation in app directory
+import { useAuthState } from "react-firebase-hooks/auth";
+import auth from "@/app/firebase/config";
 
 const Card_Section = () => {
-  const [openId, setOpenId] = useState(null); // For toggling details
-  const [colleges, setColleges] = useState([]); // Colleges from backend
+  const [colleges, setColleges] = useState([]);
+  const router = useRouter(); // ✅ Next router
+  const [user, loading, error] = useAuthState(auth);
 
   useEffect(() => {
     const fetchColleges = async () => {
@@ -18,8 +22,6 @@ const Card_Section = () => {
     };
     fetchColleges();
   }, []);
-
-
 
   return (
     <section className="py-8 px-4 bg-gray-100">
@@ -42,13 +44,17 @@ const Card_Section = () => {
             </p>
 
             <button
-              // onClick={() => toggleDetails(college._id)}
+              onClick={() => {
+                if (user) {
+                  router.push(`/college/${college._id}`);
+                } else {
+                  router.push("/sign-in"); // 👈 Your Sign In page route
+                }
+              }}
               className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
             >
-            View Details
+              View Details
             </button>
-
-          
           </div>
         ))}
       </div>

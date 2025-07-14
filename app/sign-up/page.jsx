@@ -3,12 +3,58 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  updateProfile,
+} from "firebase/auth";
 import auth from "../firebase/config";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 export default function ModernSignupForm() {
+  const provider = new GoogleAuthProvider();
+  const handleGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // ✅ Save to database
+      await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: user.displayName,
+          email: user.email,
+          image: user.photoURL,
+          uid: user.uid,
+          role: "user",
+          createdAt: new Date(),
+        }),
+      });
+
+      toast.success("Signed in with Google!", {
+        style: {
+          border: "1px solid #713200",
+          padding: "32px",
+        },
+      });
+
+      navigate.push("/"); 
+    } catch (error) {
+      console.log("Google sign-in error:", error.message);
+      toast.error(`Google Sign-in failed: ${error.message}`, {
+        style: {
+          border: "1px solid red",
+          padding: "20px",
+        },
+      });
+    }
+  };
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -41,6 +87,19 @@ export default function ModernSignupForm() {
       // Update the user's profile with the full name (displayName)
       await updateProfile(user, {
         displayName: formData.fullName,
+      });
+      await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: user.email,
+          uid: user.uid,
+          role: "user",
+          createdAt: new Date(),
+        }),
       });
 
       console.log("Submitted:", formData);
@@ -80,7 +139,10 @@ export default function ModernSignupForm() {
         </h2>
 
         <div className="flex justify-center gap-4 mb-6">
-          <button className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md">
+          <button
+            onClick={handleGoogle}
+            className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md"
+          >
             <FcGoogle size={20} /> Google
           </button>
           <button className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md text-blue-600">
