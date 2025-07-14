@@ -21,6 +21,7 @@ export default function SignInPage() {
     signInWithPopup(auth, provider)
       .then((result) => {
         console.log(result);
+        useRouter('/')
       })
       .catch((error) => {
         console.log(error);
@@ -35,7 +36,7 @@ export default function SignInPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.email || !form.password) {
-      alert("Please fill in all fields");
+      toast.error("Please fill in all fields");
       return;
     }
     try {

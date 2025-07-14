@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const AllColleges = () => {
@@ -42,9 +43,11 @@ const AllColleges = () => {
             <p>⭐ {college.rating}</p>
             <p>🎓 Admission: {college.admissionDate}</p>
             <p>📚 Research: {college.researchCount}</p>
-            <button className="mt-3 bg-blue-600 text-white px-4 py-2 rounded">
-              Details
-            </button>
+          <Link href={`/college/${college._id }`}>
+              <button className="mt-3 bg-blue-600 text-white px-4 py-2 rounded">
+                Details
+              </button>
+            </Link>
           </div>
         ))}
       </div>
