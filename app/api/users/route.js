@@ -17,8 +17,6 @@ export async function POST(request) {
     await client.connect();
     const db = client.db("CollegeAdmission");
     const users = db.collection("users");
-
-    // Optional: Check if user already exists
     const existingUser = await users.findOne({ email });
     if (existingUser) {
       return NextResponse.json(

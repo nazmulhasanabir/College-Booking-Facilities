@@ -1,4 +1,3 @@
-
 // 🧠 This is a Server Component (default in App Router)
 export default async function CollegeDetails({ params }) {
   const { id } = params;
@@ -7,30 +6,49 @@ export default async function CollegeDetails({ params }) {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    return <div className="text-center py-20">College not found!</div>;
-  }
-
   const college = await res.json();
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <div className="rounded-xl shadow-md overflow-hidden">
-        <img  className="w-full h-64 object-cover" src={college.image} alt="" />
-      */
-        <div className="p-6 bg-white dark:bg-gray-900">
+      <div className="rounded-xl shadow-md overflow-hidden bg-white dark:bg-gray-900">
+        <img
+          className="w-full h-64 object-cover"
+          src={college.image}
+          alt={college.name}
+        />
+
+        <div className="p-6">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
             {college.name}
           </h1>
+
           <p className="text-gray-600 dark:text-gray-300 mb-2">
-            <strong>Admission Date:</strong> {college.admissionDate}
+            <strong>Location:</strong> {college.location}
           </p>
+
           <p className="text-gray-600 dark:text-gray-300 mb-2">
-            <strong>Rating:</strong> {college.rating} ⭐
+            <strong>Established:</strong> {college.established}
           </p>
+
+          <p className="text-gray-600 dark:text-gray-300 mb-2">
+            <strong>Type:</strong> {college.type}
+          </p>
+
           <p className="text-gray-600 dark:text-gray-300 mb-4">
-            <strong>Research Count:</strong> {college.researchCount.toLocaleString()}
+            <strong>Research History:</strong> {college.researchHistory}
           </p>
+
+          {/* Admission Dates */}
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+              Admission Dates
+            </h2>
+            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+              {college.admissionDates?.map((date, idx) => (
+                <li key={idx}>{date}</li>
+              ))}
+            </ul>
+          </div>
 
           {/* Events */}
           <div className="mb-6">
@@ -51,7 +69,7 @@ export default async function CollegeDetails({ params }) {
           </div>
 
           {/* Sports */}
-          <div>
+          <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
               Sports
             </h2>
@@ -66,6 +84,25 @@ export default async function CollegeDetails({ params }) {
               ))}
             </div>
           </div>
+
+          {/* Campus Facilities */}
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
+              Campus Facilities
+            </h2>
+            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+              {college.campusFacilities?.map((facility, idx) => (
+                <li key={idx}>{facility}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto">
+        <div className="flex justify-center mt-6">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded">
+            Apply
+          </button>
         </div>
       </div>
     </div>

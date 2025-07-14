@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import {  useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
@@ -7,10 +7,13 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  FacebookAuthProvider,
 } from "firebase/auth";
 import auth from "../firebase/config";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+
 export default function SignInPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -21,13 +24,25 @@ export default function SignInPage() {
     signInWithPopup(auth, provider)
       .then((result) => {
         console.log(result);
-        useRouter('/')
+        navigate.push("/");
       })
       .catch((error) => {
         console.log(error);
       });
   };
-
+const handleFacebook = () => {
+    signInWithPopup(auth, FacebookAuthProvider)
+      .then((result) => {
+        console.log("Facebook Sign-In Result:", result);
+        navigate.push("/");
+      })
+      .catch((error) => {
+        console.error("Facebook Sign-In Error:", error);
+        toast.error(`Failed to sign in with Facebook: ${error.message}`, {
+          style: { border: "1px solid #713200", padding: "16px" },
+        });
+      });
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -46,9 +61,6 @@ export default function SignInPage() {
         form.password
       );
       console.log(res);
-
-      // Add your auth logic here
-      console.log("Login:", form);
       toast.success("Successfully Login!", {
         style: {
           border: "1px solid #713200",
@@ -57,9 +69,8 @@ export default function SignInPage() {
       });
       navigate.push("/");
     } catch (error) {
-      console.error("Error creating or updating user:", error.message);
-
-      toast.error(`Failed to create user: ${error.message}`, {
+      console.error("Error signing in:", error.message);
+      toast.error(`Failed to sign in: ${error.message}`, {
         style: {
           border: "1px solid #713200",
           padding: "32px",
@@ -67,6 +78,34 @@ export default function SignInPage() {
       });
     }
   };
+
+ const handlePasswordReset = async () => {
+
+  if (!form.email) {
+    toast.error("Please enter your email address");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, form.email);
+    toast.success("Password reset email sent! Check your inbox.", {
+      style: {
+        border: "1px solid #713200",
+        padding: "16px",
+      },
+    });
+  } catch (error) {
+    console.error("Error sending password reset email:", error.message);
+    toast.error(`Failed to send reset email: ${error.message}`, {
+      style: {
+        border: "1px solid #713200",
+        padding: "16px",
+      },
+    });
+  }
+};
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-100 flex items-center justify-center px-4">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
@@ -81,7 +120,9 @@ export default function SignInPage() {
           >
             <FcGoogle size={20} /> Google
           </button>
-          <button className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md text-blue-600">
+          <button  
+          onClick={handleFacebook}
+          className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md text-blue-600">
             <FaFacebook size={20} /> Facebook
           </button>
         </div>
@@ -121,6 +162,16 @@ export default function SignInPage() {
                 <IoEyeOutline size={20} />
               )}
             </span>
+          </div>
+
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={handlePasswordReset}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot Password?
+            </button>
           </div>
 
           <button

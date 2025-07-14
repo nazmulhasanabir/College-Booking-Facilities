@@ -5,6 +5,7 @@ import { FaFacebook } from "react-icons/fa";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import {
   createUserWithEmailAndPassword,
+  FacebookAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
   updateProfile,
@@ -19,8 +20,6 @@ export default function ModernSignupForm() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      // ✅ Save to database
       await fetch("/api/users", {
         method: "POST",
         headers: {
@@ -54,7 +53,19 @@ export default function ModernSignupForm() {
       });
     }
   };
-
+const handleFacebook = () => {
+    signInWithPopup(auth, FacebookAuthProvider)
+      .then((result) => {
+        console.log("Facebook Sign-In Result:", result);
+        navigate.push("/");
+      })
+      .catch((error) => {
+        console.error("Facebook Sign-In Error:", error);
+        toast.error(`Failed to sign in with Facebook: ${error.message}`, {
+          style: { border: "1px solid #713200", padding: "16px" },
+        });
+      });
+  };
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -112,7 +123,6 @@ export default function ModernSignupForm() {
       });
       navigate.push("/");
 
-      // You might want to do something with the user object here, like redirecting them or updating UI
     } catch (error) {
       console.error("Error creating or updating user:", error.message);
 
@@ -145,7 +155,9 @@ export default function ModernSignupForm() {
           >
             <FcGoogle size={20} /> Google
           </button>
-          <button className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md text-blue-600">
+          <button 
+          onClick={handleFacebook}
+          className="flex items-center gap-2 border px-5 py-2 rounded-md text-sm font-medium hover:shadow-md text-blue-600">
             <FaFacebook size={20} /> Facebook
           </button>
         </div>
